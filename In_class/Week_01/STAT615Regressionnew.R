@@ -141,7 +141,8 @@ lm(hp ~ mpg, mtcars1)
   
   anova(xx)
 #     or  
-  anova(lm(y ~ x))  # Used for variance analysis and the F test.
+  
+  # anova(lm(y ~ x))  # Used for variance analysis and the F test.
   
 # Method 2
   tribble(~ClubheadSpeadmphx,  ~Distanceydy,
@@ -247,7 +248,7 @@ ggplot(data = mpg) +
 qplot(x = hwy, data = mpg, geom = "histogram")
 
 qplot(x = cty, data = mpg, bins = 10, fill = I("green"), 
-      geom = "histogram")
+      geom = "histogram", color = I("black"))
 
 
 # The histograms are not quite normal and the boxplots do show 
@@ -320,7 +321,7 @@ summary(x)
 # theoretical slope is equal to 0.  You cannot reject the null
 # hypothesis that the intercept of the theoretical model is equal to
 # 0 for its p value is higher than .05.  Also, take note of the
-# t values.  High t values are good. Low t values are 
+# t values.  High absolute t values are good. Low absolute t values are 
 # bad. There is a high t value for the coefficient for cty, so we are
 # confident that it is significantly different from 0. But that is
 # not the case for the intercept.
@@ -418,6 +419,10 @@ I
 summary(I)
 
 residuals(I)
+
+
+
+round(residuals(I), 3)
 
 # Add the residuals.  What is the answer ?
 
