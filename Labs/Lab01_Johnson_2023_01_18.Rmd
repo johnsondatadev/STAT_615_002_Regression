@@ -1,0 +1,107 @@
+---
+title: "STAT615 Lab 1"
+author: "Johnson ODEJIDE"
+date: "2023-01-18"
+output: 
+  html_document:
+    toc: true
+    toc_level: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE, message=FALSE}
+library(tidyverse)
+library(dplyr)
+```
+
+## Question a.
+
+Obtain the estimated regression function.  Plot the estimated regression function and the data (use R to generate the scatter plot and the regression line) Does a linear regression function appear to give a good fit in this case?
+
+```{r}
+route <- c(1, 0, 2, 0, 3, 1, 0, 1, 2, 0)
+ampules <- c(16, 9, 17, 12, 22, 13, 8, 15, 19, 11)
+
+df = tibble(route, ampules)
+
+df %>% 
+  ggplot(aes(x = route, y = ampules)) +
+  geom_point(color = "red") +
+  geom_smooth(method = "lm", se = F, formula = y ~ x)
+
+lm.fit <- lm(ampules ~ route)
+summary(lm.fit)
+```
+Although not many points went through the line, the points are not so far from the linear regression line to the extent that we have the sufficient evidence to disprove that it is fit. There is a positive relationship.
+
+## Question b.
+
+Obtain a point estimate of the expected number of broken ampules when X = 1 transfer is made.
+```{r}
+# The formula is given as 
+# y(hat) = 10.2 + 4x
+
+# when x = 1
+yhat_1 <- 10.2 + 4*1
+
+yhat_1
+```
+The expected number of broken ampules when X = 1 transfer is made is 14.2
+## Question c.
+
+Estimate the increase in the expected number of ampules broken when there are 2 transfers as compared to 1 transfer.  (Hint: Use the slope of the model)
+
+```{r}
+# Calculate for when X = 2
+yhat_2 <- 10.2 + 4*2
+
+# Estimate the increase
+slope <- yhat_2 - yhat_1
+slope
+```
+The increase is estimated to be *4*
+
+
+## Question d.
+
+Find the specific residual for Xi  =  3. Show all of your work .  Determine if the observed value of 22 is above or below average.
+
+```{r}
+# For x = 3
+# y_hat = 10.2 + 4*3
+# y_hat = 10.2 + 12 = 22.2
+# residual for X3 = 22.2 - 22 = 0.2 (Above average because it is positive)
+
+yhat <- 10.2 + 4 * 3
+residual <- yhat - 22 # Where 22 is the expected value
+residual
+```
+Since the residual is positive, we conclude that it is *above average*
+
+## Question e.
+
+Verify that your fitted regression line goes through the point (Xbar,Ybar)
+
+```{r}
+Xbar = mean(route)
+Ybar = mean(ampules)
+# To verify that the fitted regression line goes through the point, we substitute x in the equation for Xbar, that is, 1 and verify if it is 14.2
+
+yhat <- 10.2 + 4 * 1
+print(paste("Xbar = ", Xbar, ", Ybar = ", Ybar, "Yhat at points(1, 14.2) = ", yhat))
+```
+The fitted regression line goes through the point at *xbar = 1 and ybar = 14.2* since `yhat` and `ybar` are the same value.
+
+## Question f.
+
+Which value in the R summary output table determines if your model is doing a good job explaining the variation in the dependent variable produced by the model.  In this case identify this specific proportion of variation.
+
+The *Multiple R-squared* does the job of explaining the variation in the dependent variable produced by the model.
+
+In this case, the Multiple R-Squared is ***0.9009***
+```{r}
+# Multiple R-squared:  0.9009
+```
