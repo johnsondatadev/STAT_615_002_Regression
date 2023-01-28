@@ -50,6 +50,7 @@ yhat_1 <- 10.2 + 4*1
 yhat_1
 ```
 The expected number of broken ampules when X = 1 transfer is made is 14.2
+
 ## Question c.
 
 Estimate the increase in the expected number of ampules broken when there are 2 transfers as compared to 1 transfer.  (Hint: Use the slope of the model)
@@ -101,7 +102,7 @@ Which value in the R summary output table determines if your model is doing a go
 
 The *Multiple R-squared* does the job of explaining the variation in the dependent variable produced by the model.
 
-In this case, the Multiple R-Squared is ***0.9009***
+In this case, the Multiple R-Squared is ***0.9009*** meaning that about 90% of the variability in the dependent variable (ampules) can be explained by the model.
 ```{r}
 # Multiple R-squared:  0.9009
 ```
