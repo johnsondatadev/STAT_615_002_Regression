@@ -1,0 +1,76 @@
+---
+title: "Classwork/Lab for Week 2"
+author: "Johnson ODEJIDE"
+date: "2023-01-31"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+
+## a
+```{r}
+taxdf <- tribble(
+  ~SellingPrice, ~Taxes,
+  279900,	3104,
+  146500,	1173,
+  237700,	3076,
+  200000,	1608,
+  159900,	1454,
+  499900,	2997,
+  265500,	4054,
+  289900,	3002
+)
+
+taxdf %>% 
+  ggplot(aes(x = Taxes, y = SellingPrice)) +
+  geom_point() +
+  geom_smooth(se = F, method = lm)
+```
+
+## b
+```{r}
+lm.fit <- lm(taxdf$SellingPrice~taxdf$Taxes)
+lm.fit
+```
+
+## c
+```{r}
+taxdf %>% 
+  mutate(
+    residuals = SellingPrice - (100456.77 + 62.32 * Taxes)
+  ) -> taxdf_resid
+taxdf_resid
+```
+
+## d
+```{r}
+lm.fit %>% 
+  ggplot(aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+
+## e
+```{r}
+anova(lm.fit)
+fcritical <- qf(p=0.05, df1=1, df2=6, lower.tail = F)
+print(paste("FCritical = ", fcritical))
+fvalue <- 2.9181
+# fcritical <- 5.987378
+
+ifelse(fvalue > fcritical, "Reject the null hypothesis", "Fail to reject the null hypothesis")
+```
+We fail to reject the null hypothesis because the fvalue (2.9181) is less than fcritical (5.987378)
+
+
+## 2
+
+The plot ***B*** suggests that a linear model for the associated bivariate data is ***NOT*** appropriate
+
+***Justification***
+
+The plot shows a form of curvature indicating that it is not normal and so a linear model is not appropriate. The variance is not even, rather it is curved.

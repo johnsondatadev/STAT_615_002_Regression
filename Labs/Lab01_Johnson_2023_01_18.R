@@ -31,7 +31,7 @@ slope <- y_hat_2 - y_hat_1
 slope
 
 yhat <- 10.2 + 4 * 3
-residual <- yhat - 22 # Where 22 is the expected value
+residual <- 22 - yhat # Where 22 is the observed value
 residual
 
 Xbar = mean(route)

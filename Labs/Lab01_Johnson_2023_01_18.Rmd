@@ -74,13 +74,13 @@ Find the specific residual for Xi  =  3. Show all of your work .  Determine if t
 # For x = 3
 # y_hat = 10.2 + 4*3
 # y_hat = 10.2 + 12 = 22.2
-# residual for X3 = 22.2 - 22 = 0.2 (Above average because it is positive)
+# residual for X3 = 22.2 - 22 = 0.2 (Below average because it is negative)
 
 yhat <- 10.2 + 4 * 3
-residual <- yhat - 22 # Where 22 is the expected value
+residual <- 22 - yhat # Where 22 is the observed value
 residual
 ```
-Since the residual is positive, we conclude that it is *above average*
+Since the residual is negative, we conclude that it is *below average*
 
 ## Question e.
 
@@ -92,6 +92,7 @@ Ybar = mean(ampules)
 # To verify that the fitted regression line goes through the point, we substitute x in the equation for Xbar, that is, 1 and verify if it is 14.2
 
 yhat <- 10.2 + 4 * 1
+print(paste("yhat = ", yhat))
 print(paste("Xbar = ", Xbar, ", Ybar = ", Ybar, "Yhat at points(1, 14.2) = ", yhat))
 ```
 The fitted regression line goes through the point at *xbar = 1 and ybar = 14.2* since `yhat` and `ybar` are the same value.
