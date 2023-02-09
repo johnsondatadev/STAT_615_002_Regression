@@ -3,8 +3,8 @@ title: "Classwork/Lab  Week 4 Session 1"
 author: "Johnson ODEJIDE"
 date: "2023-02-07"
 output:
-  word_document: default
   html_document: default
+  word_document: default
 ---
 
 
@@ -15,7 +15,9 @@ library(tidyverse)
 library(MASS)
 ```
 ## 1
+
 Plot the residuals against ei against xi
+
 ```{r}
 x <- c(5, 8, 11, 7, 13, 12, 12, 6)
 
@@ -28,6 +30,7 @@ lm.fit <- lm(y ~ x)
 plot(df$x, lm.fit$residuals)
 abline(0, 0)
 ```
+
 The data does not appear to be normal because the variance are not constant, most of the data points are below the line.
 
 ### b
@@ -40,6 +43,7 @@ lm.fit1 <- lm(ynew ~ xnew)
 plot(df1$xnew, lm.fit1$residuals)
 abline(0, 0)
 ```
+
 The data appears to be more normal than the previous model. There appears to be an equal distribution of the data points below and above the line. Although, a closer look at the points indicate a form of curvature. In order to conclude, other plots might be plotted.
 
 ## 2
@@ -52,6 +56,7 @@ err_consumption <- c(3.2, 2.9, -1.7, -2.0, -2.3, -1.2, -0.9, 0.8, 0.7, 0.5)
 plot(x_consumption, err_consumption)
 abline(0, 0)
 ```
+
 Yes, a transformation might alleviate this problem.
 
 ## 3
@@ -80,10 +85,12 @@ plot(x3, lm.fit4$residuals)
 abline(0, 0)
 
 ```
+
 A look at the scatter plot indicates that a linear regression model is more appropriate with the transformed data than the previous one although not perfect, there are more points that are closer to the regression line. Furthermore, the residual plot also indicates some form that generally shows the data is more appropriate given the number of data points available in the data.
 
 ## 4
-For the bivariate data given below, the residual plots suggest problems involving non-normality or non-constant error variance or both.  Use Box – Cox method as indicated in class to produce a lamda power transformation that will best normalize the data. Your work should include all graphs and plots that support your final answer.  Use a series of steps and reasoning demonstrated in class.
+
+For the bivariate data given below, the residual plots suggest problems involving non-normality or non-constant error variance or both.  Use Box – Cox method as indicated in class to produce a lambda power transformation that will best normalize the data. Your work should include all graphs and plots that support your final answer.  Use a series of steps and reasoning demonstrated in class.
 
 ```{r}
 x4 <- c(7, 7, 8, 3, 2, 4, 4, 6, 6, 7, 5, 3, 3, 5, 8)
@@ -110,4 +117,4 @@ qqline(model$residuals)
 qqnorm(new_model$residuals) 
 qqline(new_model$residuals)
 ```
-The highest lamda power transformation is ***-0.4242424***
+The highest lambda power transformation is ***-0.4242424***
