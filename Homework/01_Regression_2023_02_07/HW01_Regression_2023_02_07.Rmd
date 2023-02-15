@@ -1,0 +1,87 @@
+---
+title: "Homework 1 - Regression"
+author: "Johnson ODEJIDE"
+date: "2023-02-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+
+## 1
+
+```{r}
+MuscleMass <- read_csv("Dataset/MuscelMassData.csv", show_col_types = F)
+
+head(MuscleMass)
+```
+
+## 2
+
+```{r}
+MuscleMass %>% 
+  ggplot(aes(x = X, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = F, formula = 'y ~ x')
+```
+
+There appears to be a negative relationship between the dependent variable X and the independent variable Y and the points are close to the line indicating that this relationship is linear.
+
+
+## 3
+
+```{r}
+lm.MM <- lm(y ~ X, data = MuscleMass)
+summary(lm.MM)
+```
+
+The equation is given as `Yhat = 113.35 - 0.628X`
+
+_For every increase in 1 unit of X, y is estimated to decrease by 0.628_
+
+
+## 4
+
+```{r}
+lm.MM$residuals
+```
+
+## 5
+
+```{r}
+qqnorm(lm.MM$residuals)
+qqline(lm.MM$residuals)
+```
+
+Most of the data points appear to be on the line, showing that the data is somewhat normal with only few deviations from the line observed.
+
+
+## 6
+
+```{r}
+plot(MuscleMass$X , lm.resid,
+     xlab = "X",
+     ylab = "residuals",
+     main = "Residual plot")
+abline(0, 0)
+```
+
+The plot shows the presence of an outlier. There is a point that is far from the other points.
+
+## 7
+
+```{r}
+lm.resid <- resid(lm.MM)
+lm.fitted <- fitted(lm.MM)
+
+plot(lm.fitted, lm.resid)
+abline(0, 0)
+```
+
+Looking at the residual plot, it shows that linear relationship is appropriate for the bivariate data. There appears to be equal spread among the points, that is, the variance seems constant. Additionally, the points do not have a particular pattern.
+
+
+

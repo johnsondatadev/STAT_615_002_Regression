@@ -1,0 +1,91 @@
+---
+title: "Classwork Lab Matrices"
+author: "Johnson ODEJIDE"
+date: "2023-02-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1a
+```{r}
+A <- matrix(c(10, 8,
+              5, 12), ncol = 2, byrow = TRUE)
+A
+```
+
+## 1b
+```{r}
+B <- matrix(c(5, 3,
+              15, 6), ncol = 2, byrow = TRUE)
+B
+```
+
+## 1c
+
+```{r}
+C <- matrix(c(1, -4, 5,
+              6, 0, -3), ncol = 3, byrow = TRUE)
+C
+```
+
+## 1d
+
+```{r}
+D <- matrix(c(-3, 7, 2,
+              3, -2, -10), ncol = 3, byrow = TRUE)
+D
+```
+
+## 1e
+
+```{r}
+E <- matrix(c(1, -4, 5, -10,
+              6, 0, -3, 6,
+              12, 5, -11, -4), ncol = 4, byrow = TRUE)
+E
+```
+## 1f
+
+```{r}
+F_ <- matrix(c(-3, 7, 2, 7,
+              3, -2, -10, -2,
+              1, 0, 5, -10), ncol = 4, byrow = TRUE)
+F_
+```
+
+## 2
+
+```{r}
+C %*% E
+```
+## 3
+
+```{r}
+t(E)
+```
+
+## 4
+```{r}
+solve(B)
+```
+
+## 5
+
+```{r}
+solve(B) + t(B)
+```
+
+## 6
+```{r}
+t(solve(A))
+```
+
+## 7
+
+```{r}
+solve(solve(B) %*% t(B))
+```
+

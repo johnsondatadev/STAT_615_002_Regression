@@ -37,7 +37,7 @@ qqline(lm.MM$residuals)
 lm.resid <- resid(lm.MM)
 lm.fitted <- fitted(lm.MM)
 
-plot(lm.MM, which = 1)
+
 
 lm.outlier <- 
 
@@ -46,13 +46,12 @@ ggplot(data = lm.MM) +
   geom_hline(yintercept = 0) 
 
 
-plot(MuscleMass$X , lm.resid,
+plot(MuscleMass$X, lm.resid,
      xlab = "X",
      ylab = "residuals",
      main = "Residual plot")
+text(MuscleMass$X, lm.resid, n = 2, col = 'red')
 abline(0, 0)
-text(MuscleMass$X, lm.resid, label = MuscleMass$X)
-
 
 
 ## 7
