@@ -1,0 +1,388 @@
+---
+title: "Summary"
+author: "Johnson ODEJIDE"
+date: "2023-03-05"
+output: 
+  html_document:
+    toc: yes
+    toc_depth: '2'
+    df_print: paged
+  pdf_document:
+    toc: yes
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Plot the estimated regression function
+
+```{r}
+route <- c(1, 0, 2, 0, 3, 1, 0, 1, 2, 0)
+ampules <- c(16, 9, 17, 12, 22, 13, 8, 15, 19, 11)
+
+df = tibble(route, ampules)
+
+df %>% 
+  ggplot(aes(x = route, y = ampules)) +
+  geom_point(color = "red") +
+  geom_smooth(method = "lm", se = F, formula = y ~ x)
+```
+
+## Fit a regression line
+
+```{r}
+lm.fit <- lm(ampules ~ route)
+summary(lm.fit)
+```
+
+## Estimate a slope
+
+Estimate the increase in the expected number of ampules broken when there are 2 transfers as compared to 1 transfer. (Hint: Use the slope of the model)
+
+```{r}
+# The formula is given as 
+# y(hat) = 10.2 + 4x
+
+# when x = 1
+yhat_1 <- 10.2 + 4*1
+
+yhat_1
+
+# Calculate for when X = 2
+yhat_2 <- 10.2 + 4*2
+
+# Estimate the increase
+slope <- yhat_2 - yhat_1
+slope
+```
+
+## Find specific residual for Xi = 3. Show all of your work . Determine if the observed value of 22 is above or below average.
+
+```{r}
+# For x = 3
+# y_hat = 10.2 + 4*3
+# y_hat = 10.2 + 12 = 22.2
+# residual for X3 = 22.2 - 22 = 0.2 (Below average because it is negative)
+
+yhat <- 10.2 + 4 * 3
+residual <- 22 - yhat # Where 22 is the observed value
+residual
+```
+**Conclusion: **
+Since the residual is negative, we conclude that it is below average
+
+## Verify that your fitted regression line goes through the point (Xbar,Ybar)
+
+```{r}
+Xbar = mean(route)
+Ybar = mean(ampules)
+# To verify that the fitted regression line goes through the point, we substitute x in the equation for Xbar, that is, 1 and verify if it is 14.2
+
+yhat <- 10.2 + 4 * 1
+print(paste("yhat = ", yhat))
+
+print(paste("Xbar = ", Xbar, ", Ybar = ", Ybar, "Yhat at points(1, 14.2) = ", yhat))
+
+```
+
+**Remark:**
+
+The fitted regression line goes through the point at xbar = 1 and ybar = 14.2 since yhat and ybar are the same value.
+
+
+## Interpretation of the Multiple R-Squared
+
+Which value in the R summary output table determines if your model is doing a good job explaining the variation in the dependent variable produced by the model. In this case identify this specific proportion of variation.
+
+The Multiple R-squared does the job of explaining the variation in the dependent variable produced by the model.
+
+In this case, the Multiple R-Squared is 0.9009 meaning that about 90% of the variability in the dependent variable (ampules) can be explained by the model.
+
+## Computation of confidence interval in R
+
+```{r}
+X = c(1, 0, 2, 0, 3, 1, 0, 1, 2, 0)
+Y = c(16, 9, 17, 12, 22, 13, 8, 15, 19, 11)
+
+d.data <- tibble(X, Y)
+
+conf.95 <- qt(p=.025, df=8, lower.tail = FALSE)
+
+# conf.95
+
+lm.fit <- lm(Y ~ X, data = d.data)
+# lm.fit
+
+# summary(lm.fit)
+
+# qt(p=.025, df=8, lower.tail = FALSE)
+# 4.00 +/- 2.306(0.469)
+
+upper_bound <- 4.00 + 2.306 * 0.469
+lower_bound <- 4.00 - 2.306 * 0.469
+
+conf.int <- c(lower_bound, upper_bound)
+conf.int
+```
+
+## Raw computation of confidence interval
+
+se = 0.4690
+
+df = 8
+
+b +/- t(se)
+
+t = 2.306004
+
+4.0 +/- 2.306004(0.4690)
+
+confidence interval = (4.0 - 2.306004(0.4690), 4.0 + 2.306004(0.4690))
+
+= (2.9185, 5.0815)
+
+## Difference between confidence interval and prediction interval
+
+While the prediction interval predicts in what range a future observation will fall, the confidence interval shows in what range of values the prediction falls based on some data provided already. In summary, confidence interval predicts what is available within the limits of the data while prediction interval is able to predict the future.
+
+
+## Prediction Interval in R
+
+```{r}
+new_df <- data.frame(X = 19)
+
+predict(object = lm.fit, newdata = new_df, interval = "prediction") %>% 
+cbind(new_df)
+```
+
+
+## Confidence Interval in Prediction
+
+```{r}
+predict(object = lm.fit, newdata = new_df, interval = "confidence") %>% 
+cbind(new_df)
+```
+**Remarks on Prediction and Confidence Interval**
+
+Prediction Interval when X = 19 (66.4033, 105.9967)
+
+Confidence Interval when X = 19 (66.701, 105.699)
+
+## Plotting Residuals using QQplot
+
+```{r}
+qqnorm(lm.fit$residuals)
+qqline(lm.fit$residuals)
+```
+
+## Confidence Interval (Method 2) - 95%
+
+```{r}
+confint(lm.fit, '(Intercept)', level = 0.95)
+```
+**Remark: ** The residual indicates that the observed value 400 is below average because the residual falls below the regression line.
+
+## Get second residual value
+
+```{r}
+lm.fit.res <- residuals(lm.fit)
+lm.fit.res[2]
+```
+
+## Residual plot (Box plot)
+
+```{r}
+boxplot(residuals(lm.fit))
+```
+
+
+## Residual plots (Scatter plot)
+
+```{r}
+lm.resid <- resid(lm.fit)
+
+plot(d.data$X , lm.resid,
+     xlab = "X",
+     ylab = "residuals",
+     main = "Residual plot")
+abline(0, 0)
+```
+
+## Residual against Fitted Plot
+
+```{r}
+lm.fitted <- fitted(lm.fit)
+
+plot(lm.fitted, lm.resid)
+abline(0, 0)
+```
+
+## To reject null hypotheses or not?
+
+```{r}
+x <- c(9,9,9,7,7,7,5,5,5,3,3,3,1,1,1)
+y<- c(.07,.09,.08,.16,.17,.21,.49,.58,.53,1.22,1.15,1.07,2.84,2.57,3.10)
+
+linear <- lm(y ~ x)
+summary(linear)
+
+anova(linear)
+
+f.value <- 55.994
+
+f.critical <- qf(p = 0.025, df1 = 1, df2 = 13, lower.tail = FALSE)
+
+print(paste("F value = ", f.value, "F Critical = ", f.critical))
+
+ifelse(f.value > f.critical, "Reject the null hypothesis", "Fail to reject the null hypothesis")
+```
+
+## Boxcox
+
+```{r}
+library(MASS)
+
+box_cox <- boxcox(Y ~ X)
+
+# Optimum lambda
+lambda <- box_cox$x[which.max(box_cox$y)] 
+lambda
+
+new_model <- lm(((Y^lambda-1)/lambda) ~ X) 
+new_model
+
+lambda.3 <- lm(((Y^.3 - 1) / .3) ~ X) 
+anova(lambda.3) 
+
+lambda.5 <- lm(((Y^.5 - 1) / .5) ~ X) 
+anova(lambda.5)
+```
+
+**Remark: ** An Appropriate transformation of Y would be Y^(0.5050505)
+
+## SSE from lambda results
+
+SSE = 0.584 when lamda = .3 suggested transformation is Y^0.3
+
+SSE = 1.51 when lamda = .4 suggested transformation is Y^0.4
+
+SSE = 4.20 when lamda = .5 suggested transformation is Y^0.5
+
+```{r}
+Y_trans <- lm(Y^0.5 ~ X)
+summary(Y_trans)
+```
+
+**Remark: ** sqrt(yhat) <- 10.26093 + 1.07629X
+
+```{r}
+plot(X, sqrt(Y))
+abline(lm(sqrt(Y)~X))
+```
+
+**Residual Plot**
+
+```{r}
+plot(fitted(Y_trans), residuals(Y_trans))
+abline(0,0, col = "red")
+```
+
+## Initializing Matrices
+
+```{r}
+A <- matrix(c(1, 4,
+              2, 6,
+              3, 8), ncol = 2, byrow = TRUE)
+
+
+B <- matrix(c(1, 3,
+              1, 4,
+              2, 5), ncol = 2, byrow = TRUE)
+
+
+C <- matrix(c(3, 8, 1,
+              5, 4, 0), ncol = 3, byrow = TRUE)
+
+D <- matrix(c(5, 3,
+              15, 6), ncol = 2, byrow = TRUE)
+D
+```
+
+## Transpose of Matrices
+
+```{r}
+t(B)
+```
+
+## Inverse of Matrices
+
+**Remark: ** To inverse a matrix, it has to square!
+
+```{r}
+solve(D)
+```
+
+## Multiplication of uneven dimensions
+
+```{r}
+A %*% C -> mult.res
+mult.res
+```
+
+## Getting the dimensions of Matrices
+
+```{r}
+dim(mult.res)
+```
+
+
+## Intercept and Slope using Matrices
+
+```{r}
+Y <- matrix(c(124, 
+              95,
+              71,
+              45,
+              18), ncol = 1, byrow = TRUE)
+
+X <- matrix(c(1, 49, 
+              1, 69,
+              1, 89,
+              1, 99,
+              1, 109), ncol = 2, byrow = TRUE)
+
+t(X) -> transposeX
+# transposeX
+  
+dim(X)
+
+transposeX%*%X -> Product2
+# Product2
+
+det(Product2)
+
+solve(Product2)
+
+interceptandslope <- solve(Product2)%*%transposeX%*%Y
+  
+interceptandslope
+```
+
+**Remark: ** Intercept = 211.27, and Slope = -1.6948
+
+## Fitted values using Matrices
+
+```{r}
+X %*% interceptandslope
+```
+
+
+## Residuals using Matrices
+
+```{r}
+Y - X %*% interceptandslope
+```
+

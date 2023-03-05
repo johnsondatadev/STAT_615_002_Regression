@@ -1,0 +1,203 @@
+---
+title: "Practice Midterm"
+author: "Johnson ODEJIDE"
+date: "2023-03-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(MASS)
+```
+
+## (a)
+```{r}
+X <- c(221,	400,	300,	400,	200,	260,	300,	375,	210,	400,	200,	344)
+Y <- c(33,	42,	37,	53,	22,	37,	40,	42,	25,	52,	30,	42)
+
+dt <- data.frame(X, Y)
+# dt
+```
+Use and show R code to produce a scatter plot for the bivariate data given above. Indicate if the scatter plot is showing a definitive positive or negative trend for the data.
+
+```{r}
+
+dt %>% 
+  ggplot(aes(x = X, y = Y)) +
+  geom_point(color = 'red') +
+  geom_smooth(method = 'lm', se = FALSE, formula = y ~ x)
+```
+
+The scatter plot showed a positive relationship, although this relationship is not perfectly definite as a little curve is also noticeable at some points.
+
+## (b)
+
+Use and show R code to produce a linear model for the bivariate data shown above (use the lm method). Interpret the slope of your model.
+
+```{r}
+lm.fit <- lm(Y ~ X)
+summary(lm.fit)
+
+# Yhat = 6.063 + 0.106X
+# On average, for each additional increase in 1 unit of X, there is an increase in Y by 0.106 units.
+```
+
+On average, for each additional increase in X by 1, there is an increase in Y by 0.106.
+
+
+## (c)
+
+About 83.32% of the variation in Y can be explained by the linear regression model.
+
+
+## (d)
+
+```{r}
+confint(lm.fit, '(Intercept)', level = 0.95)
+```
+
+The residual indicates that the observed value 400 is below average because the residual falls below the regression line.
+
+## (e)
+
+```{r}
+lm.fit.res <- residuals(lm.fit)
+lm.fit.res[2]
+```
+
+
+## (f)
+
+```{r}
+lm.fit.res
+```
+
+
+
+## (g)
+
+```{r}
+plot(fitted(lm.fit), residuals(lm.fit))
+# plot(lm.fit$fitted.values, lm.fit$residuals)
+abline(0, 0, col='red')
+
+# plot(lm.fit$fitted.values, lm.fit$residuals)
+# abline(0, 0, col='red')
+```
+
+The residual vs fitted plot shows signs of constant variance and no outliers in the data. Also shows signs of normality as there are equal number of data points above and below the 0 line in no specific pattern.
+It seems it is distributed but the data appears to be a roughly straight line.
+
+
+## (h)
+
+```{r}
+boxplot(residuals(lm.fit))
+```
+
+The boxplot does not indicate the presence of an outlier
+
+## (i)
+
+```{r}
+qqnorm(residuals(lm.fit))
+# qqline(residuals(lm.fit))
+```
+
+
+## (j)
+
+```{r}
+anova(lm.fit)
+## 16.49
+```
+
+The value that estimates the variance of the population linear model is 16.49
+
+
+## (k)
+
+```{r}
+f.value <- 49.956
+
+f.critical <- qf(p = 0.05, df1 = 1, df2 = 10, lower.tail = FALSE)
+
+print(paste("F value = ", f.value, " and F Critical = ", f.critical))
+
+ifelse(f.value > f.critical, "Reject the null hypothesis", "Fail to reject the null hypothesis")
+
+```
+
+
+## (l)
+
+```{r}
+ym <- matrix(Y, ncol = 1, byrow = TRUE)
+xm <- matrix(c(
+  1, 221,	
+  1, 400,	
+  1, 300,	
+  1, 400,	
+  1, 200,	
+  1, 260,	
+  1, 300,	
+  1, 375,	
+  1, 210,	
+  1, 400,	
+  1, 200,	
+  1, 344), ncol = 2, byrow = T)
+
+t(xm) -> transposeXm
+
+transposeXm%*%xm-> Product1
+
+solve(Product1)%*%transposeXm%*%ym
+
+
+solve(Product1)%*%transposeXm%*%ym -> interceptandslope
+# interceptandslope
+```
+
+`B0 = 6.0631075`
+
+`B1 = 0.1058844`
+
+These results align with what was earlier gotten from fitting the linear regression model with the lm() function.
+
+# Part 2
+
+## (a)
+
+```{r}
+xi <- c(0:9)
+yi <- c(98, 135, 162, 178, 221, 232, 283, 300, 374, 395)
+
+xcom <- data.frame(xi, yi)
+
+xcom %>% 
+  ggplot(aes(x = xi, y = yi)) +
+  geom_point(color = 'red') +
+  geom_smooth(method = 'lm', se = F, formula= y ~ x)
+```
+
+The linear relationship seems to be appropriate, showing a positive linear relationship.
+
+## (b)
+
+```{r}
+box_cox <- boxcox(yi ~ xi)
+
+lambda <- box_cox$x[which.max(box_cox$y)] 
+lambda
+
+new_model <- lm(((yi^lambda-1)/lambda) ~ xi) 
+new_model
+```
+The appropriate power transformation of y is y^0.5050505
+
+```{r}
+Y_trans <- lm(sqrt(yi) ~ xi)
+summary(Y_trans)
+```
+sqrt(yhat) = 10.26093 + 1.07629x

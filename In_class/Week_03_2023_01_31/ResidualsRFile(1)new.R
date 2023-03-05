@@ -165,7 +165,7 @@ mpg
 
 plot(mpg$hwy ~ mpg$cty)
 
-# The scatter plot does suggest a positive linear 
+# The scatter plot does suggest a positive linear
 # relationship
 
 

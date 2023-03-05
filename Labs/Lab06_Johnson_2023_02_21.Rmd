@@ -1,0 +1,117 @@
+---
+title: "Homework 2"
+author: "Johnson ODEJIDE"
+date: "2023-02-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1
+
+```{r}
+x <- c(4, 1, 2, 3, 3, 4)
+
+y <- c(16, 5, 10, 15, 13, 22)
+
+xm <- matrix(c(4, 
+               1, 
+               2, 
+               3, 
+               3, 
+               4), ncol = 1, byrow = TRUE)
+
+ym <- matrix(c(16, 
+               5, 
+               10, 
+               15, 
+               13, 
+               22), ncol = 1, byrow = TRUE)
+
+
+```
+**a**
+
+```{r}
+t(ym) %*% ym
+```
+**b**
+
+```{r}
+t(xm) %*% xm
+```
+**c**
+
+```{r}
+t(xm) %*% y
+```
+
+## 2
+
+```{r}
+R <- matrix(c(25,
+              12
+                  ), ncol = 1, byrow = TRUE)
+ R
+ 
+
+ Q <- matrix(c(4, 7,
+               2, 3), ncol = 2, byrow =TRUE)
+ Q
+
+ det(Q)
+ 
+ solve(Q)
+ 
+ solve(Q)%*%R
+```
+
+`x = 4.5`, `y = 1.0`
+
+## 3
+
+```{r}
+Y <- matrix(c(124, 
+              95,
+              71,
+              45,
+              18), ncol = 1, byrow = TRUE)
+
+X <- matrix(c(1, 49, 
+              1, 69,
+              1, 89,
+              1, 99,
+              1, 109), ncol = 2, byrow = TRUE)
+
+t(X) -> transposeX
+  transposeX
+  dim(X)
+  
+  transposeX%*%X -> Product2
+  Product2
+  
+  det(Product2)
+  
+  solve(Product2)
+  
+  
+  
+  interceptandslope <- solve(Product2)%*%transposeX%*%Y
+  
+  interceptandslope
+
+```
+`intercept = 211.27`, and `slope = -1.6948`
+
+### Fitted Values
+```{r}
+X %*% interceptandslope
+```
+### Residuals
+
+```{r}
+Y - X %*% interceptandslope
+```
+

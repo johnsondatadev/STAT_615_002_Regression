@@ -150,7 +150,7 @@ t(A)
 A%*%A
 
 # The same result can be achieved by raising A to the 2nd power.
-install.packages("expm")
+# install.packages("expm")
 library(expm)
 
 A %^% 2

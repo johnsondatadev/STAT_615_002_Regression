@@ -25,3 +25,14 @@ qqline(model$residuals)
 qqnorm(new_model$residuals) 
 qqline(new_model$residuals)
 
+X <- list(12, 14, 15, 18, 19, 22,10,18,18)
+Mean <- list(16, 16, 16, 16, 16,16,16,16,16)
+sd <- list(2, 2, 2, 2, 2,2,2,2,2)
+
+# zscore = (x - Mean) / sd
+
+output2 <- vector("double") 
+for (i in seq_along(X)) {
+  output2[[i]] <- X[[i]] - (Mean[[i]] / sd[[i]])
+}
+output2
