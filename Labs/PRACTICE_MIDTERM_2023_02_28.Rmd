@@ -54,7 +54,7 @@ About 83.32% of the variation in Y can be explained by the linear regression mod
 ## (d)
 
 ```{r}
-confint(lm.fit, '(Intercept)', level = 0.95)
+confint(lm.fit, level = 0.95)
 ```
 
 The residual indicates that the observed value 400 is below average because the residual falls below the regression line.
