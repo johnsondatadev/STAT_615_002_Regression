@@ -184,6 +184,10 @@ qqline(lm.fit$residuals)
 
 ```{r}
 confint(lm.fit, '(Intercept)', level = 0.95)
+
+## Confidence Interval
+
+confint(lm.fit, level = 0.95)
 ```
 **Remark: ** The residual indicates that the observed value 400 is below average because the residual falls below the regression line.
 

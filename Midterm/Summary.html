@@ -1880,6 +1880,12 @@ qqline(lm.fit$residuals)</code></pre>
 <pre class="r"><code>confint(lm.fit, &#39;(Intercept)&#39;, level = 0.95)</code></pre>
 <pre><code>##               2.5 %   97.5 %
 ## (Intercept) 8.67037 11.72963</code></pre>
+<pre class="r"><code>## Confidence Interval
+
+confint(lm.fit, level = 0.95)</code></pre>
+<pre><code>##                2.5 %    97.5 %
+## (Intercept) 8.670370 11.729630
+## X           2.918388  5.081612</code></pre>
 <p><strong>Remark: </strong> The residual indicates that the observed
 value 400 is below average because the residual falls below the
 regression line.</p>
