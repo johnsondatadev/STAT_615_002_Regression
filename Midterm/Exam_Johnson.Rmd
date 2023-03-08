@@ -1,0 +1,308 @@
+---
+title: "Midterm"
+author: "Johnson ODEJIDE"
+date: "2023-03-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F)
+
+library(tidyverse)
+```
+
+# Part 1
+
+```{r}
+X <- c(1,	3,	6,	11,	15,	19,	22,	27,	31,	35,	42,	47,	48,	54)
+
+Y <- c(103,	97,	91,	83,	79,	72,	65,	60,	57,	52,	48,	43,	41,	37)
+```
+
+**a.**	Use and show R code to produce a scatter plot for the bivariate data given above. Indicate if the scatter plot is showing a definitive positive or negative trend for the data. Use R code or offer a good approximation for the correlation coefficient.
+
+```{r}
+df = tibble(X, Y)
+
+df %>% 
+  ggplot(aes(x = X, y = Y)) +
+  geom_point(color = "red") +
+  geom_smooth(method = "lm", se = F, formula = y ~ x)
+```
+
+The scatter plot is showing a definitive negative trend for the data. As X increases, Y is decreasing.
+
+**Correlation coefficient**
+```{r}
+round(cor(X, Y), digits = 4)
+```
+
+**b.**	Use and show R code to produce a linear model for the bivariate data shown above (use the lm method).  Interpret the slope of your model.
+
+```{r}
+lm.fit <- lm(Y ~ X)
+summary(lm.fit)
+```
+
+On average, as X increases by 1, Y is estimated to decrease by 1.2098.
+
+**c.**	Use your model to predict the value of Y if X is 58.
+
+```{r}
+# Yhat = 97.4810 - 1.20979X
+
+Yhat <- 97.4810 - 1.20979 * 58
+print(paste("Y is estimated to be ", Yhat, " when X is 58"))
+```
+
+**d.**	Should your model be used to predict a value of Y for an X value of 75? Justify your answer.
+
+No, the model should not be used to predict a value of Y for an X value of 75 because the regression line does not capture for when X is 75. That would be extrapolation, going outside the boundaries of X values on the regression line.
+
+**e.**	Use and show R code to determine how much of the variation in Y is explained by your model.
+
+```{r}
+summary(lm.fit)
+```
+
+About 97.15% of the variation in Y is explained by the model.
+
+**f.**	Find a 95% confidence interval for the slope of your model.
+
+```{r}
+confint(lm.fit, level = 0.95)
+```
+
+The confidence interval is (-1.34011, -1.07947)
+
+**g.**	Now find a prediction interval for the fixed value of 11, using r code as demonstrated in class. 
+
+```{r}
+new_df <- data.frame(X = 11)
+
+predict(object = lm.fit, newdata = new_df, interval = "prediction") %>% 
+cbind(new_df)
+```
+The prediction interval is (75.38924, 92.95739)
+
+**h.**	Find the specific residual for the data point (57,31). Does the residual indicate that the observed value of 57 is above or below average.  Explain why or why not.
+
+```{r}
+lm.fit$residuals[9]
+```
+
+The residual for the data point (57, 31) is -2.977526 which is below average because it is negative.
+
+**i.**	Use and show R code to find all of the residuals of your model. 
+
+```{r}
+lm.fit$residuals
+```
+
+**j.**	Use and show R code to produce the residual plot. (Residuals versus Fitted Values) Does the Residual Plot suggest a good linear fit for your model? Explain why or why not.
+
+```{r}
+lm.fitted <- fitted(lm.fit)
+lm.resid <- resid(lm.fit)
+
+plot(lm.fitted, lm.resid)
+abline(0, 0)
+```
+
+The plot does not suggest a good linear fit as there is an observed pattern of curvature on the residual plot.
+
+**k.**	Use and show R code that produces a boxplot of your residuals.  Does your boxplot indicate the existence of outliers.
+
+```{r}
+boxplot(residuals(lm.fit))
+```
+
+The residual box plot does not indicate the existence of outliers.
+
+**l.**	Use and show R code to determine the normality status of your residuals.
+
+```{r}
+qqnorm(lm.fit$residuals)
+qqline(lm.fit$residuals)
+```
+
+The residuals appear to be normal as the points are close to the line.
+
+**m.**	Find the value that estimates the variance of the population linear model. (Use may use R coding)
+
+```{r}
+(summary(lm.fit)$sigma)^2
+```
+
+**n.**	Execute an F test to determine if a linear model from part 1b is appropriate. Use the steps and procedure illustrated in class by making use of an ANOVA table, the F value, and the F critical number. And of course, indicate if the null hypothesis should be rejected.
+
+```{r}
+summary(lm.fit)
+
+anova(lm.fit)
+
+
+f.value <- 409.11
+
+f.critical <- qf(p = 0.025, df1 = 1, df2 = 12, lower.tail = FALSE)
+
+print(paste("F value = ", f.value, " and F Critical = ", round(f.critical, digits = 4)))
+
+ifelse(f.value > f.critical, "Reject the null hypothesis", "Fail to reject the null hypothesis")
+```
+
+**o.**	Now use matrix methods to find b0 and b1.  Write the regression model and compare your results to the answer for part b above.
+
+```{r}
+Y <- matrix(Y <- c(103,	97,	91,	83,	79,	72,	65,	60,	57,	52,	48,	43,	41,	37), ncol = 1, byrow = TRUE)
+
+X <- matrix(c(1, 1, 
+              1, 3,
+              1, 6,
+              1, 11,
+              1, 15,
+              1, 19, 
+              1, 22,
+              1, 17,
+              1, 31,
+              1, 35,
+              1, 42,
+              1, 47,
+              1, 48,
+              1, 54), ncol = 2, byrow = TRUE)
+
+t(X) -> transposeX
+
+transposeX%*%X -> Product2
+
+interceptandslope <- solve(Product2)%*%transposeX%*%Y
+  
+interceptandslope
+```
+
+The Intercept = 95.726287 and the slope = -1.174268
+
+**p.**	Use matrix methods to find residuals of your model. 
+
+```{r}
+Y - X %*% interceptandslope
+```
+
+**q.**	Use matrix methods to also find the fitted values for your model.
+
+```{r}
+X %*% interceptandslope
+```
+
+# Part 2
+
+**a.** True or false;  matrix multiplication is commutative.  In other words matrix A times matrix B is the same as matrix B times matrix A
+
+**False**, matrix multiplication is not commutative.
+
+**b.** Use the following two matrices ; 
+
+A =   5    6      B =   12   5 
+     -1    3            2   -2 
+      
+to  confirm the property      (AB)-1=  B-1A-1     (That is the inverse of matrix A multiplied by matrix B  equals the inverse of matrix B multiplied by the inverse of matrix A,                                                            
+
+```{r}
+A <- matrix(c(5, 6,
+              -1, 3), ncol = 2, byrow = TRUE)
+
+B = matrix(c(12, 5,
+             2, -2), ncol = 2, byrow = TRUE)
+
+solve1 <- solve(A %*% B)
+
+solve2 <- solve(B) %*% solve(A)
+
+round(solve1, digits = 4)
+
+round(solve2, digits = 4)
+```
+
+**c.** Use R coding and matrix methods to solve the following system of equations.
+                      3x +  y  =  10
+                     -2x + 3y  =   8
+
+
+```{r}
+R <- matrix(c(10,
+              8), ncol = 1, byrow = TRUE)
+
+ Q <- matrix(c(3, 1,
+               -2, 3), ncol = 2, byrow =TRUE)
+
+ solve(Q)%*%R
+```
+x = 2, y = 4
+
+
+**d.**  Use R coding and matrix methods to solve the following system of equations.
+                    2x + y - 3z  =  -7
+                     x + 2y +  z  =   8
+                    -3x  - y + 2z  =  1
+
+```{r}
+R <- matrix(c(-7, 
+               8, 
+               1), ncol = 1, byrow = TRUE)
+
+ Q <- matrix(c(2, 1, -3,
+               1, 2, 1,
+               -3, -1, 2), ncol = 3, byrow =TRUE)
+
+ solve(Q)%*%R
+```
+x = 2, y = 1, z = 4
+
+# Part 3
+
+
+
+```{r}
+X	<- c(0,	1,	2,	3,	4,	5,	6,	7,	8,	9,	10,	11)
+Y <- c(62.95,	79.99,	91.97,	105.71,	122.78,	131.67,	151.33,	179.32,	203.3, 226.54,	248.71,	281.42)
+```
+
+**a)**	Using the bivariate data given above, plot Y against X.
+
+```{r}
+df = tibble(X, Y)
+
+df %>% 
+  ggplot(aes(x = X, y = Y)) +
+  geom_point(color = "blue") +
+  geom_smooth(method = "lm", se = F, formula = y ~ x, color = "red") +
+  theme_bw()
+```
+
+
+**b)**	Execute a log transform on the Y values in the table.
+
+```{r}
+Ytrans <- c()
+count = 1
+for (i in Y){
+  Ytrans[count] <- log(i)
+  count = count + 1
+}
+Ytrans
+```
+
+**c)**	Now plot the log transform values on Y against the X values
+
+```{r}
+new_df <- tibble(X, Ytrans)
+new_df %>% 
+  ggplot(aes(x = X, y = Ytrans)) +
+  geom_point(color = "blue") +
+  geom_smooth(method = "lm", se = F, formula = y ~ x, color = "red") +
+  theme_bw()
+```
+
+**d)**	Compare the scatter plots of part a) and part c). Is the Y transform scatter plot more linear than the initial scatter plot generated in part a) ? Briefly discuss and comment.
+
+Yes, the transformed scatter plot is more linear than the previous (original) scatter plot because more points are closely touching the regression line in the transformed model than the previous one. There are some observed deviations of points from the regression line on the original scatter plot.
