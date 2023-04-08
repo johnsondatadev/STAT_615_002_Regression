@@ -37,3 +37,6 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# Apple OS Configuration Files created by the Finder application
+.DS_Store

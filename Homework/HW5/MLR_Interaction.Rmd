@@ -1,0 +1,144 @@
+---
+title: "Homework Multiple Regression (Interaction)"
+author: "Johnson"
+date: "2023-04-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, include = T, warning = F)
+options(scipen = 4, digits = 4)
+```
+
+## 1
+
+Run the following R code
+
+```{r}
+library(tidyverse)
+mtcars
+```
+
+## 2
+
+In the mtcars data table, define or describe each variable abbreviation(one sentence for each variable).
+mpg,  hp,  wt, and disp
+
+**mpg** - Miles per (US) gallon
+
+**hp** - Gross horsepower of the automobile
+
+**wt** - Weight of the automobile  (1000 lbs)
+
+**disp** - Displacement (cu.in.)
+
+## 3
+
+Use and show R code to determine if there exists multicollinearity problems among any of the explanatory variables.
+
+```{r}
+mtcars %>% 
+  select(hp, wt, disp, mpg) %>% 
+  cor()
+# cor(mtcars[])
+```
+
+**Answer**
+
+Yes, there is multicollinearity. `hp` and `wt` are strongly correlated with `disp`. Similarly, `wt` and `hp` are also correlated.
+
+## 4
+
+Use and show R code to generate a full regression model that features `mpg` as the response variable. The explanatory variables are `hp`, `wt`, and `disp`.
+
+```{r}
+fullmodel <- lm(mpg ~ hp + wt + disp, data = mtcars)
+fullmodel
+summary(fullmodel)
+```
+**Answer**
+
+The model is given as:
+
+`E(mpg) = 37.105505 - 0.031157 * hp - 3.800891 * wt - 0.000937 * disp`
+
+## 5
+
+Use and show R code to build a 95% confidence interval and a 90% confidence interval for the true coefficient for wt.  (These are two separate problems. Show all of your work. Provide an interpretation for each interval)
+
+### 95% Confidence Interval
+
+
+```{r}
+# coefficient for wt = -3.800891
+# df = 28 # The Linear Model degree of freedom
+# se = 1.066191 # Standard Error of wt obtained from the model summary table
+
+# Using the formula b +/- t(se)
+b <- -3.800891
+t <- qt(p=.025, df=28, lower.tail = FALSE)
+se <- 1.066191
+upper.conf <- b + t * se
+lower.conf <- b - t * se
+
+confint95.fullmodel <- c("Lower Confidence Interval" = lower.conf, "Upper Confidence Interval" = upper.conf)
+confint95.fullmodel
+# confint(fullmodel, level = 0.95)
+```
+
+### 90% Confidence Interval
+
+```{r}
+b <- -3.800891
+t <- qt(p=.05, df=28, lower.tail = FALSE)
+se <- 1.066191
+upper.conf <- b + t * se
+lower.conf <- b - t * se
+
+confint90.fullmodel <- c("Lower Confidence Interval" = lower.conf, "Upper Confidence Interval" = upper.conf)
+confint90.fullmodel
+
+# confint.lm(fullmodel, level = 0.90)
+```
+
+
+## 6
+
+It has been determined that there is interaction involving the variables hp and wt.
+
+### a
+
+Produce a full model that includes the interaction term hp : wt.
+
+```{r}
+int.fullmodel <- lm(mpg ~ hp + wt + disp + hp:wt, data = mtcars)
+int.fullmodel
+```
+
+### b
+
+Show and use R code to determine if the interaction term is significant at the .05 level.
+
+```{r}
+summary(int.fullmodel)
+```
+
+**Answer**
+
+Yes, the interaction term is significant at the .05 level (p-value = 0.00095)
+
+### c
+
+What value in your output tables indicates the percentage of variability of the response variable that is explained by the model using only explanatory variables that have significant impact on the response variable?
+
+**Answer**
+
+The Adjusted R-Squared which is 0.868
+
+### d
+
+Also for this interactive model, explain why or why not the null hypothesis (Ho :: all explanatory coefficients = 0) should be rejected.
+
+**Answer**
+
+Since the p-value of the model (p < 0.0001) is less than the 0.05 significance level, we reject the null hypothesis.
