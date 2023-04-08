@@ -1,0 +1,67 @@
+---
+title: "Classwork - Multiple Linear Regression and Dummy Variable"
+author: "Johnson ODEJIDE"
+date: "2023-03-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F)
+
+library(tidyverse)
+```
+
+```{r}
+dt<- tribble(
+  ~"WorkExperience",   ~"LevelofEducation",    ~"AnnualIncome($Thousands)",
+        21,                       6,                       	 31.7,
+        14,                      3,              		 17.9,
+        4,                       8,              		 22.7,
+        16,                      8,              		 63.1,
+        12,                      4,               		33,
+        20,                      4,               		41.4,
+        25,                      1,               		20.7,
+        8,                        3,               		14.6,
+        24,                      12,             		 97.3,
+        28,                       9,              		72.1,
+        4,                         11,             		 49.1,
+        15,                       4,              		 52)
+dt
+```
+## 1
+
+For the Table given above:
+Use and show R code to produce a full Multiple Regression Model. The response variable is Annual Income.  Also produce the summary table
+
+```{r}
+mlrm.fit <- lm(`AnnualIncome($Thousands)` ~ WorkExperience + LevelofEducation, data = dt)
+summary(mlrm.fit)
+```
+
+## 2
+
+Use and show R code to produce a full Multiple Regression Model that includes and interaction term. Also produce the summary table
+
+```{r}
+mlrm.int.fit <- lm(`AnnualIncome($Thousands)` ~ WorkExperience + LevelofEducation + (WorkExperience * LevelofEducation), data = dt)
+
+summary(mlrm.int.fit)
+
+# mlrm.int.fit2 <- lm(`AnnualIncome($Thousands)` ~ WorkExperience + LevelofEducation + WorkExperience:LevelofEducation, data = dt)
+
+# summary(mlrm.int.fit2)
+```
+
+
+## 3
+
+Using summary indicators from both models determine which model you would use to predict Annual Income.  Justify your answer.  Your analysis should have 6 to 7 sentences using and comparing significance of pvalues, R2, adusted R2, variable standard errors, residual standard errors and the overall significance of both models.
+
+I would use the model without interaction terms because In the model without an interaction term, looking at the Multiple R-squared, about 80.26% of the variation in the Annual income can be explained by the model and the Adjusted R-squared also indicates that 75.87% of the variation in the Annual Income can be explained by the model using only the dependent variables that are significant. Work Experience has a positive effect and the effect is significant at p = 0.0095. Similarly, the Level of Education has a positive effect and the effect is significant at p-value = 0.000552. In contrast, Work Experience and Level of Education are not significant and so we cannot individual reject the null hypothesis even though about 82.54% of variation in the Annual Income can be explained by the model.
+
+```{r}
+anova(mlrm.fit, mlrm.int.fit)
+```
+
+
+
