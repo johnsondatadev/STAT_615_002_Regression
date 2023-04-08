@@ -1,0 +1,61 @@
+---
+title: "Multple Regression Interaction Analysis"
+author: "Johnson ODEJIDE"
+date: "2023-03-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, include = TRUE)
+
+library(tidyverse)
+```
+
+```{r}
+df <- tribble(~"WorkExperience",   ~"LevelofEducation",     ~"AnnualIncome($Thousands)",
+                  21,                       6,                       	 31.7,
+        	       14,                      3,              		 17.9,
+        	        4,                       8,              		 22.7,
+                   16,                      8,              		 63.1,
+                   12,                      4,               		33,
+                   20,                      4,               		41.4,
+                   25,                      1,               		20.7,
+                   8,                        3,               		14.6,
+                   24,                      12,             		 97.3,
+                   28,                       9,              		72.1,
+                  4,                         11,             		 49.1,
+                  15,                       4,              		 52)
+
+```
+
+**1)**
+
+Use and show R code to produce a full Multiple Regression Model. The response variable is Annual Income.  Also produce the summary table
+
+```{r}
+MLR.fit <- lm(`AnnualIncome($Thousands)` ~ WorkExperience + LevelofEducation, data = df)
+
+summary(MLR.fit)
+```
+
+
+**2)**
+
+Use and show R code to produce a full Multiple Regression Model that includes and interaction term. Also produce the summary table
+
+```{r}
+MLR.int <- lm(`AnnualIncome($Thousands)` ~ WorkExperience + LevelofEducation + WorkExperience:LevelofEducation, data = df)
+
+summary(MLR.int)
+```
+
+
+**3)**
+
+Using summary indicators from both models determine which model you would use to predict Annual Income.  Justify your answer.  Your analysis should have 6 to 7 sentences using and comparing significance of pvalues, R2, adusted R2, variable standard errors, residual standard errors and the overall significance of both models.
+
+**Response**
+
+I would use the model without interaction terms because WorkExperience and LevelofEducation are both significant at level of 0.05 with p-values of 0.0095 and 0.00055 respecitively. The coefficients are also positive. The R-squared are also high enough showing that 80% of the variation in the AnnualIncome can be explained by the model and 75% of the variation in the AnnualIncome can be explained by the significant variables in the model. Overall, the model is also significant at p-value < 0.005.
+On the other hand, the second model is not recommended. Although in general, the model appears to be significant at p-value of 0.002. However, WorkExperience and LevelofEducation are not significant at the level of 0.05. Furthermore, the interaction term between WorkExperience and LevelofEducation is also not significant. Nonetheless, about 82.54% of the variability in the AnnualIncome can be explained by the model.
+The residual standard errors and the variable errors of both models seem similar in a more general sense.

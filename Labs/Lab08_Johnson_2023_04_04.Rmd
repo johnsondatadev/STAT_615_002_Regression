@@ -1,0 +1,102 @@
+---
+title: "Lab 6"
+author: "Johnson ODEJIDE"
+date: "2023-04-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = T, message = F, warning = F)
+```
+
+```{r}
+xi1 <- c(7, 4, 16, 3, 21, 8)
+xi2 <- c(33, 41, 7, 49, 5, 31)
+yi <- c(42, 33, 75, 28, 91, 55)
+
+dt <- data.frame(xi1, xi2, yi)
+dt
+```
+
+## Using Matrix
+
+```{r}
+Xone <- matrix(c(1, 7, 33,
+                 1, 4, 41,
+                 1, 16, 7,
+                 1, 3, 49,
+                 1, 21, 5,
+                 1, 8, 31), ncol = 3, byrow = TRUE)
+Xone
+
+Yone <- matrix(c(42, 33, 75, 28, 91, 55))
+Yone
+
+tot <- length(Yone)
+tot
+
+jmat <- c(1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1)
+
+# jmat
+
+# jmat
+len <- length(Yone)
+mat <- matrix(jmat,nrow = len,ncol = len, byrow =TRUE)
+# mat
+
+```
+
+```{r}
+t(Xone)%*%Xone -> Product3
+Product3
+solve(Product3)%*%t(Xone)%*%Yone -> coefficients1
+coefficients1
+
+# Find SSE
+t(Yone)%*%Yone - t(coefficients1)%*%t(Xone)%*%Yone
+
+# Find SSTO
+t(Yone)%*%Yone - (1/6)*t(Yone)%*%mat%*%Yone
+
+
+# Find SSR
+t(coefficients1)%*%t(Xone)%*%Yone - (1/6)*t(Yone)%*%mat%*%Yone
+```
+**SSE = 62.07354**
+
+**SSTO = 3072**
+
+**SSR = 3009.926**
+
+
+## Using lm and anova
+
+```{r}
+lm(yi ~ xi1 + xi2, data = dt) -> lmdt
+
+anova(lmdt)
+
+```
+
+**SSE** = 62.07
+
+```{r}
+SSE = 62.07
+print(paste("SSE = ", SSE))
+
+SSTO <- 3004.41 + 5.51 + 62.07
+print(paste("SSTO = ", SSTO))
+```
+
+**SSTO** = 3071.99
+
+```{r}
+SSR <- SSTO - SSE
+print(paste("SSR = ", SSR))
+```
+

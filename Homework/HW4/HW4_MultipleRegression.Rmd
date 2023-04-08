@@ -1,0 +1,157 @@
+---
+title: "Homework Multiple Regression"
+author: "Johnson ODEJIDE"
+date: "2023-04-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, include = T, warning = F)
+
+library(tidyverse)
+```
+
+### Table 
+
+```{r}
+tribble(  ~EngineSize,  ~CurbWeight,  ~Horsepower,  ~MilesperGallon,
+                  2.4,         3289,          177,               24,
+                  2.4,         3263,          158,               25,
+                  2.5,         3230,          170,               24,
+                  3.5,         3580,          272,               22,
+                  2.8,         3175,          255,               18,
+                  3.5,         3643,          263,               22,
+                  3.5,         3497,          306,               20,
+                  3.0,         3340,          230,               21,
+                  3.6,         3861,          263,               19,
+                  2.4,         3287,          173,               24,
+                  3.3,         3629,          234,               21,
+                  2.5,         3270,          170,               22,
+                  3.5,         3292,          270,               22
+) -> V
+   V
+
+```
+
+
+## 1
+
+Use and show R code that will produce a correlation matrix.
+
+```{r}
+cor(V)
+```
+
+
+## 2
+
+Indicate if the correlation matrix shows multicollinearity problems with pairs of explanatory variables.  The variable Miles per Gallon is the response variable
+
+**Answer** 
+
+_Yes, there is a problem of multicollinearity with some pairs of the explanatory variables._
+
+_I see that there is a very strong correlation between EngineSize and Horsepower. There is also a fairly strong correlation between Horsepower and curbWeight. There is also a very strong correlation between EngineSize and CurbWeight._
+
+
+## 3
+
+Indicate the explanatory variable(s) that the response variable is strongly correlated with.
+
+**Answer** 
+
+_There appears to be a strong correlation between Horspower and the response variable (MilesperGallon). There is also a fairly strong correlation between MilesperGallon and EngineSize at -0.597. The correlation between CurbWeight and MilesperGallon (-0.39) is not that strong._
+
+## 4
+
+Use and show R code that will produce a full multiple regression model, that uses all explanatory variables. Write the full model that shows the coefficients for all explanatory variables and the intercept.
+
+```{r}
+MLM.fit <- lm(MilesperGallon ~ EngineSize + CurbWeight + Horsepower, data = V)
+MLM.fit
+```
+
+**Answer**
+
+The full model is:
+
+`E(MilesperGallon) = 35.827 + 4.803 * EngineSize - 0.0039 * CurbWeight - 0.0658 * Horsepower`
+
+## 5
+
+Use and show R code that will produce all important summary statistics for your model.
+
+```{r}
+summary(MLM.fit)
+```
+
+## 6
+
+Which explanatory variable(s) is/are significant at the level of .05?
+
+**Answer** 
+
+_Only Horsepower is significant at the level of .05_
+
+
+## 7
+
+Use your book or an internet source and describe the difference between R2 and adjusted R2.  (Three or four sentences)
+
+**Answer** 
+
+_The difference between R squared and adjusted R squared value is that R squared value assumes that all the independent variables considered affect the result of the model, whereas the adjusted R squared value considers only those independent variables which actually have an effect on the performance of the model._
+
+## 8
+
+What is the proportion of the variability in Milespergallon that is explained by the full model regression equation?
+
+**Answer** 
+
+_62.57% of the variability in Milespergallon can be explained by the full model_
+
+## 9
+
+What is the proportion of the variability in Milespergallon that is explained by the full model regression equation, only using explanatory variables that have significant impact on the dependent variable.
+
+**Answer** 
+
+_50.09% of the variability in Milespergallon is explained by the full model regression equation, only using explanatory variables that have significant impact on the dependent variable._
+
+## 10
+
+Use and show R code that produces a model without the explanatory variable with the highest p value. Write the new model that indicates the response variable, the explanatory coefficients and the intercept.
+
+```{r}
+mlm.fit2 <- lm(formula = MilesperGallon ~ EngineSize + CurbWeight, 
+    data = V)
+summary(mlm.fit2)
+```
+**Answer** 
+
+The new model is:
+
+`E(MilesperGallon) = 25.297 - 2.941 * EngineSize + 0.0016 * CurbWeight`
+
+## 11
+
+Explain why the null hypothesis that the population coefficient for Engine Size is equal to zero is not to be rejected.
+
+**Answer** 
+
+We fail to reject the null hypothesis that the population coefficient for Engine Size is equal to zero because its p-value (0.0958) is greater than the significant level of 0.05
+
+
+## 12
+
+Which model, the one with three explanatory variables or the one with two explanatory variables is the better model for predicting Miles per gallon?  Justify your answer in three of four sentences.
+
+**Answer** 
+
+The model with three explanatory variables is the better model because:
+
+1. Looking at the R-squared, 62.57% of the variability in MilesperGallon could be explained by the model whereas only 36.36% could be explained by the second model.
+
+2. The overall p-value for the model with two explanatory variables (0.1022) is not significant at 0.05.
+
+3. No explanatory variable in the two-variable model is significant, whereas Horsepower is significant in the model with three explanatory variables.

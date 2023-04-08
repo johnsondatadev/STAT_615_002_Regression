@@ -1,0 +1,77 @@
+---
+title: "Classwork"
+author: "Johnson ODEJIDE"
+date: "2023-03-22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F)
+
+library(tidyverse)
+
+options(scipen = 4)
+```
+
+
+```{r}
+Gender<-c("Female","Female","Female","Female","Female","Female","Female","Female","Female","Female",
+          "Male","Male","Male","Male","Male","Male","Male","Male","Male","Male")
+Gender
+
+MRICount<-c(816932,951545,991305,833868,856472,852244,790619,866662,857782,948066,949395,1001121,
+            1038437,965353,955466,1079549,924059,955003,935494,949589)
+MRICount
+
+IQ <- c(133,137,138,132,140,132,135,130,133,133,140,140,139,133,133,141,135,139,141,144)
+IQ
+```
+
+## 1 
+Use and show R code to Create a data frame for the collection of vectors above.
+
+```{r}
+df <- data.frame(Gender, MRICount, IQ)
+df
+```
+
+## 2 
+Use and show R code to produce a Multiple Linear Regression Model.
+
+```{r}
+mlr.fit <- lm(IQ ~ MRICount + Gender, data = df)
+mlr.fit
+```
+
+## 3 
+Use and show R code to produce summary indicators for your model.
+What is the p value for your model?  What is the Multiple Rsquared value for your model?
+
+```{r}
+summary(mlr.fit)
+```
+
+p value for the model is 0.0231 and the Multiple R-Squared for the model is 0.3581
+
+## 4 
+Use your regression model to predict IQ for a Female who has an MRICount of 855000 (Show all of your work.)
+
+The model is given as `Y_hat  = 0.000017MRICount + 2.486GenderMale`
+
+```{r}
+contrasts(as.factor(df$Gender))
+
+# Female = 0
+
+Yhat <- 119.09530463 + 0.00001735 * (855000) + 2.48625787 * (0)
+Yhat
+```
+
+*IQ = 133.9296*
+
+
+## 5  
+
+**Do you think that this is a good model.  Justify your answer.**
+
+No, it doesn't appear to be a good model. Foremost, we notice that although both independent variables MRICount and GenderMale have positive coefficients, indicating positive effects. However, these effects are not significant enough for us to reject the null hypothesis. Furthermore, Looking at the Multiple R-squared, only 35.81% of the variation in the dependent variable IQ can be explained by the model. Similarly, a look at the Adjusted R-Squared suggests that only about 28.26% of the variation in the IQ could be explained by these  model using only those independent variables that have an impact on the dependent variable.
