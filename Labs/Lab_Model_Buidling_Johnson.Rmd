@@ -1,0 +1,45 @@
+---
+title: "Lab Model Building"
+author: "Johnson Odejide"
+date: "2023-04-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = T, message = F, warning = F)
+library(tidyverse)
+```
+
+## 1
+
+Using the diamonds data table, create a data table having only the variables `price`, `carat`, `x`, `y`, and `z`
+
+```{r}
+diamonds.dt <- diamonds[, c("price", "carat", "x", "y", "z")]
+```
+
+# 2 
+
+Produce a multiple linear regression model using x, y, and z to predict price.
+
+```{r}
+fit.mlr <- lm(price ~ x + y + z, data = diamonds.dt)
+summary(fit.mlr)
+```
+
+# 3 
+
+Produce a multiple linear regression model using carat, x, and z to predict price.
+
+```{r}
+fit.mlr.c <- lm(price ~ carat + x + z, data = diamonds.dt)
+summary(fit.mlr.c)
+```
+
+# 4 
+
+Produce summary tables for the models that you generated for # 2 and # 3. Determine which does a better predicting price.  Justify your answer.
+
+**Answer**
+
+Both models have all predictors as significant. However, the second model (#3) that includes `carat`, `x`, `y`, and `z` as the predictors is better because it has the higher multiple R-squared and adjusted r-squared of 0.8541 and 0.8541 respectively compared to the other model that has 0.7825 and 0.7825 respectively. Both models are significant.

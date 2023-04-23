@@ -1,0 +1,208 @@
+---
+title: "Blood Pressure Prediction"
+author: "Akash & Johnson"
+date: "2023-04-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, include = T, warning = F)
+```
+
+## Exploratory Analysis
+
+```{r}
+library(tidyverse)
+bp_data <- read_csv('health.csv')
+
+dim(bp_data)
+```
+
+The data contains 1,475 observations collected from patients consisting of 9 variables over one year in 2020. The data was collected by the U.S. Centers for Disease Control and Prevention as part of its National Health and Nutrition Examination Survey (NHANES). The variables in the dataset are as follows:
+
+systolic is the systolic blood pressure of the patient. The unit of measure is milli- meters of mercury (mmHg). This is the dependent variable that we want to predict.
+
+**weight** is the measured weight of the patient in kilograms (kg).
+
+**height** is the measured height of the patient in centimeters (cm).
+
+**bmi** is the body mass index of the patient. This provides a sense of how under- weight or overweight a patient is.
+
+**waist** is the measured circumference of a patient’s waist in centimeters (cm).
+
+**age** is the self-reported age of the patient.
+
+**diabetes** is a binary indicator of whether the patient has diabetes (1) or not (0).
+
+**smoker** is a binary indicator of whether the patient smokes cigarettes regularly (1) or not (0).
+
+**fastfood** is a self-reported count of how many fast-food meals the patient has had in the past week.
+
+The data was downloaded from www.wiley.com/go/pmlr
+
+```{r}
+glimpse(bp_data)
+```
+
+`systolic` will be the response variable and the other variables will be our predictors. We need to refactor variables `diabetes` and `smoker` because they ought to be categorical variables.
+
+
+```{r}
+bp_data <- bp_data %>% 
+  mutate(diabetes = as.factor(diabetes)) %>% 
+  mutate(smoker = as.factor(smoker))
+```
+
+```{r}
+summary(bp_data)
+```
+```{r}
+bp_data %>% 
+  ggplot() +
+  geom_histogram(aes(x = systolic), fill = "lightblue", color = "black") + 
+  theme_minimal()
+```
+
+The systolic blood pressure data for the population seems to be normally distributed.
+
+```{r}
+bp_data %>% 
+  select(-systolic) %>% 
+  keep(is.numeric) %>% 
+  gather() %>% 
+  ggplot() +
+  geom_histogram(aes(x=value, fill = key), color = "black") +
+  facet_wrap(~ key, scales = "free") +
+  theme_minimal()
+```
+
+From the plot, it appears as if the only variable that is skewed is `fastfood` which is right-skewed which most of the patients consuming fast food as a meal less than five times a week.
+
+## Correlation
+
+```{r}
+library(corrplot)
+cor(bp_data[, c("systolic", "weight", "height", "bmi", "waist", "age", "fastfood")]) -> bp_data.cor
+bp_data.cor
+
+
+
+corrplot.mixed(bp_data.cor, upper = 'pie',lower='number')
+```
+
+The variable `age` has the strongest correlation with systolic blood pressure. This is followed by `weight` and `waist` which are weakly correlated. Interestingly, `fastfood` shows a negative correlation with `systolic` blood pressure, something that seems unusual and counterintuitive. Since this negative correlation is quite low, it will not significantly impact the model. It can also be seen from the graph that there is a correlation between `weight` and `waist` as well as between `waist` and `bmi`. There is also a correlation between `weight` and `bmi`. This shows that there is a potential multicollinearity issue.
+
+## Fitting the Simple Linear Regression Model
+
+Since `age` is the strongest predictor, we will use that to build a simple linear regression model.
+
+```{r}
+bp.lm.fit <- lm(systolic ~ age, data = bp_data)
+
+summary(bp.lm.fit)
+```
+The equation is given as `E(systolic) = 104.345 + 0.417(age)`
+
+## Using matrices to confirm the values
+
+```{r}
+
+bp_df <- data.frame(bp_data[, c("systolic", "age")])
+
+datarows <- nrow(bp_df)
+
+y_mat <- as.matrix(bp_df)[, 1]
+x <- bp_df[, 2]
+
+Ym <- matrix(y_mat, ncol = 1, byrow = T)
+
+
+y_int <- data.frame(matrix(nrow = datarows, ncol = 1))
+
+for(i in seq(1:datarows)){
+  y_int[i, 1] = 1
+}
+
+df <- data_frame(y_int, x)
+
+
+Xm <- cbind(rep(1, datarows), as.matrix(df[, 2]))
+
+
+# Lets find the transpose of matrix Xm
+t(Xm) -> transposeXm
+
+# The product of Xm and the transpose of Xm
+  transposeXm%*%Xm-> ProDuct1
+
+# Inverse of the matrix * transpose * Y
+solve(ProDuct1)%*%transposeXm%*%Ym
+  
+
+# Calculate the intercept and slope  
+solve(ProDuct1)%*%transposeXm%*%Ym -> interceptandslope
+  #interceptandslope
+
+```
+Using the matrix method, the equation is `Yhat = 104.345 + 0.417x` where Y is systolic and x is age
+
+**Interpretation:**
+
+The coefficient of age is positive and its effect is significant at p<0.05. On average, holding everything else constant, for each additional year in age, the systolic blood pressure increases by 0.42. However, looking at the Multiple R-squared, only about 16% of the variability in systolic blood pressure can be explained by age. Hence, we need to explore further.
+
+
+## Fitting the Multiple Linear Regression Model
+
+For the multple linear regression model, we begin with all the variables in the dataset as our predictors and systolic as the response.
+
+```{r}
+bp.fit.mlr <- lm(systolic ~ ., data = bp_data)
+
+summary(bp.fit.mlr)
+```
+The results show that `weight`, `height`, `bmi`, and `age` are all significant at p<0.05. `diabetes` is also significant but at p=0.08.
+
+
+## Residual plot
+
+```{r}
+library(olsrr)
+
+ols_plot_resid_hist(bp.fit.mlr)
+ols_plot_resid_fit(bp.fit.mlr)
+ols_plot_resid_qq(bp.fit.mlr)
+```
+
+The residual plot shows that there is no sign of heteroscedasticity in the distribution of the residuals versus fitted values.
+
+Check for autocorrelation:
+
+```{r}
+library(car)
+
+durbinWatsonTest(bp.fit.mlr)
+```
+
+With a p-value of 0.444, we fail to reject the null hypothesis and then conclude  that the residuals are not autocorrelated.
+
+Cook's distance to check for influential points in the data
+
+```{r}
+ols_plot_cooksd_chart(bp.fit.mlr)
+```
+The plot shows that there are indeed several influential points in the data. Observation 1358 stands out from the rest. We can explore that observation to see how it fits in comparison with the statistical summary of the entire dataset.
+
+```{r}
+bp_data[1358, ]
+
+summary(bp_data)
+```
+
+## Check for outliers
+
+```{r}
+outlier_ind <- as.numeric(unlist(ols_plot_cooksd_chart(bp.fit.mlr)$outliers[, "observation"]))
+
+outlier_ind
+```
+

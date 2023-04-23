@@ -1,0 +1,131 @@
+---
+title: "Life Expectancy"
+author: "Akash & Johnson"
+date: "2023-04-22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = T, warning = F, message = F)
+library(tidyverse)
+```
+
+```{r}
+life_exp <- read_csv('Life-Expectancy-Data-Updated.csv', col_types = 'ffnnnnnnnnnnnnnnnnnnnnn')
+
+head(life_exp)
+```
+```{r}
+dim(life_exp)
+
+glimpse(life_exp)
+```
+
+```{r}
+levels(life_exp$Region)
+```
+
+The dataset consists of 21 variables (Columns) and 2,864 observations (Rows). The description of the dataset is given as follows:
+
+**Country:** List of the 179 countries
+
+**Region:** 179 countries are distributed in 9 regions. (Africa, Asia, Oceania, European Union, Rest of Europe, South America, Central America and Caribbean, Middle East, North America)
+
+**Year:** Years observed from 2000 to 2015
+
+**Infant_deaths:** Infant deaths per 1000 population
+
+**Under_five_deaths:** Deaths of children under five years old per 1000 population
+
+**Adult_Mortality:** Deaths of adults per 1000 population
+
+**Alcohol_consumption:** Alcohol consumption that is recorded in liters of pure alcohol per capita with 15+ years old
+
+**Hepatitis_B:** % of coverage of Hepatitis B (HepB3) immunization among 1-year-olds.
+
+**Measles:** % of coverage of Measles containing vaccine first dose (MCV1) immunization among 1-year-olds
+
+**BMI:** BMI is a measure of nutritional status in adults. It is defined as a person's weight in kilograms divided by the square of that person's height in meters (kg/m2)
+
+**Polio:** % of coverage of Polio (Pol3) immunization among 1-year-olds.
+
+**Diphtheria:** % of coverage of Diphtheria tetanus toxoid and pertussis (DTP3) immunization among 1-year-olds.
+
+**Incidents_HIV:** Incidents of HIV per 1000 population aged 15-49
+
+**GDP_per_capita:** GDP per capita in current USD
+
+**Population_mln:** Total population in millions
+
+**Thinness_ten_nineteen_years:** Prevalence of thinness among adolescents aged 10-19 years. BMI < -2 standard deviations below the median.
+
+**Thinness_five_nine_years:** Prevalence of thinness among children aged 5-9 years. BMI < -2 standard deviations below the median.
+
+**Schooling:** Average years that people aged 25+ spent in formal education
+
+**Economy_status_Developed:** Developed country
+
+**Economy_status_Developing:** Developing country
+
+**Life Expectancy:** Average life expectancy of both genders in different years from 2010 to 2015
+
+Life expectancy is the response variable in this case. We will be predicting the life expectancy of a person based on certain criteria. We will construct a full model and then use anova function to inspect the significance of the full model as compared to the reduced and null models.
+
+## Inspect for Correlation
+
+```{r}
+life_exp_cor <- life_exp[, c(-1,-2)]
+cor(life_exp_cor)
+```
+
+Some of the variables have a strong correlation with Life expectancy. Infant deaths, Under five deaths, and adult mortality are the strongest predictors of life expectancy based on the correlation test. Schooling, BMI, Polio, Dihptheria, Incidents of HIV, GDP_per_capita, Economy status of both developing and developed countries all have a fairly good correlation with life expectancy. However, the total population does not show any correlation with life expectancy.
+
+Since there might be correlation between these predictors, we then inspect for multicollinearity
+
+
+## Inspect for Multicollinearity
+
+```{r}
+library(corrplot)
+
+life_exp_cor_matrix <- -cor(life_exp_cor)
+life_exp_cor_matrix
+
+corrplot(life_exp_cor_matrix)
+
+# corrplot.mixed(life_exp_cor_matrix, upper = 'pie',lower='square')
+
+# corrplot.mixed(life_exp_cor_matrix, upper = 'ellipse',lower='number')
+
+#require(GGally)
+#ggpairs(data.frame("Life Expectancy" = life_exp$Life_expectancy,
+ #       "Region" = life_exp$Region),
+  #      upper = list(combo = 'box'))
+```
+
+It's obvious from the plot that there are issues of mulitcollinearity. For instance, there is correlation between schooling and infant deaths as well as with under-five-deaths.There is also a strong correlation between polio and diphtheria.
+
+```{r}
+levels(life_exp$Region)
+```
+
+
+Let's selectively choose our predictors and re-inspect for collinearity
+
+```{r}
+library(olsrr)
+
+lm.fit.full <- lm(Life_expectancy ~ ., data = life_exp)
+
+lm.fit.red <- ols_step_all_possible(lm.fit.full)
+
+# Compare both models using anova
+
+anova(lm.fit.red, lm.fit.full)
+# ggpairs(life_exp_cor)
+```
+```{r}
+pairs(life_exp_cor[, 1:5], pch = 19, lower.panel = NULL)
+```
+
+
